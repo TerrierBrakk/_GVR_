@@ -1,59 +1,98 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
+[System.Serializable]
+public class Selectable {
+
+    public Button menuButton;
+    public CanvasGroup view;
+}
 
 public class TSMenu : MonoBehaviour {
 
-    public Transform wrap;
-    public List<GameObject> views = new List<GameObject>();
-    public CanvasGroup viewsWrapCG;
-    public CanvasGroup mainMenuCG;
-    public Vector3 activeViewsWrapPosition;
-    public CanvasGroup canvasCG;
+    public Image underline;
+    public List<Selectable> selectables = new List<Selectable>();
 
-    private Vector3 defaultWrapTransformPos;
-    private int currentViewIndex;
+    public Light menuLight;
+    public Light viewLight;
+    public Material menuLightMat;
+    public Material viewLightMat;
 
-    void Start() {
+    private int currentSelectableIndex;
+    private bool enteredSelection;
 
-        defaultWrapTransformPos = wrap.localPosition;
+    public void Start() {
+
+        SelectFromMenu(0);
     }
 
-    public void ChangeView(int viewIndex) {
+    public void Update() {
 
-        if (viewIndex < 0) {
+        if (!enteredSelection) {
 
-            mainMenuCG.DOFade(1.0f, 0.25f);
-            viewsWrapCG.DOFade(0.0f, 0.25f).OnComplete(delegate {
-
-                views[currentViewIndex].SetActive(false);
-            });
-
-            wrap.DOLocalMove(defaultWrapTransformPos, 0.25f);
-            wrap.DORotate(new Vector3(0, -16.242f, 0.0f), 0.25f);
-
-        } else {
-
-            mainMenuCG.DOFade(0.0f, 0.25f);
-            viewsWrapCG.DOFade(1.0f, 0.25f);
-
-            views[currentViewIndex].SetActive(false);
-            views[currentViewIndex = viewIndex].SetActive(true);
-
-            wrap.DOLocalMove(activeViewsWrapPosition, 0.25f);
-            wrap.DORotate(new Vector3(0, 10.2f, 0.0f), 0.25f);
-        }
+            if (Input.GetKeyDown(KeyCode.S))
+                SelectFromMenu(currentSelectableIndex + 1);
+            else if (Input.GetKeyDown(KeyCode.W))
+                SelectFromMenu(currentSelectableIndex - 1);
+            else if (Input.GetKeyDown(KeyCode.Return))
+                EnterSelection(true);
+        } else if (Input.GetKeyDown(KeyCode.Escape))
+            EnterSelection(false);
     }
 
-    public void LoadWorld() {
+    public void SelectFromMenu(int desiredSelectableIndex) {
 
+        if (desiredSelectableIndex > selectables.Count - 1) currentSelectableIndex = 0;
+        else if (desiredSelectableIndex < 0) currentSelectableIndex = selectables.Count - 1;
+        else currentSelectableIndex = desiredSelectableIndex;
+
+        underline.GetComponent<RectTransform>().localPosition = 
+            selectables[currentSelectableIndex].menuButton.GetComponent<RectTransform>().localPosition;
+
+        underline.fillAmount = 0.0f;
+        underline.DOKill();
+        underline.DOFillAmount(1.0f, 0.30f);
+    }
+    
+    public void EnterSelection(bool value) {
+
+        selectables[currentSelectableIndex].menuButton.onClick.Invoke();
+        if (currentSelectableIndex == 0 || currentSelectableIndex == selectables.Count - 1) return;
+            
+        enteredSelection = value;
+
+        float menuLightIntensity = value ? 0.0f : 1.0f;
+        float viewLightIntensity = value ? 1.0f : 0.0f;
+
+        menuLight.DOIntensity(menuLightIntensity, 0.25f);
+        viewLight.DOIntensity(viewLightIntensity, 0.25f);
+
+        menuLightMat.DOColor(Color.white * menuLightIntensity, "_EmissionColor", 0.25f);
+        viewLightMat.DOColor(Color.white * viewLightIntensity, "_EmissionColor", 0.25f);
+
+        selectables[currentSelectableIndex].view.DOFade(viewLightIntensity, 0.25f);
+    }
+
+    public void LoadWorld() { 
+        
+        //Open door
         SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
-        canvasCG.DOFade(0.0f, 0.25f).OnComplete(delegate {
 
-            canvasCG.gameObject.SetActive(false);
+        menuLight.DOIntensity(0.0f, 0.25f);
+        viewLight.DOIntensity(0.0f, 0.25f);
+
+        menuLightMat.DOColor(Color.white * 0.0f, "_EmissionColor", 0.25f);
+        viewLightMat.DOColor(Color.white * 0.0f, "_EmissionColor", 0.25f);
+
+        selectables[currentSelectableIndex].view.DOFade(0.0f, 0.25f).OnComplete(delegate {
+
+            Destroy(gameObject);
         });
     }
+
+    public void QuitApplication() { }
 }
