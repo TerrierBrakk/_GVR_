@@ -21,6 +21,9 @@ public class TSMenu : MonoBehaviour {
     public Light viewLight;
     public Material menuLightMat;
     public Material viewLightMat;
+    public CanvasGroup menuCanvasGroup;
+
+    public Transform door;
 
     private int currentSelectableIndex;
     private bool enteredSelection;
@@ -77,10 +80,10 @@ public class TSMenu : MonoBehaviour {
         selectables[currentSelectableIndex].view.DOFade(viewLightIntensity, 0.25f);
     }
 
-    public void LoadWorld() { 
-        
-        //Open door
-        SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+    public void LoadWorld() {
+
+        enteredSelection = true;
+        StartCoroutine(_LoadWorld());
 
         menuLight.DOIntensity(0.0f, 0.25f);
         viewLight.DOIntensity(0.0f, 0.25f);
@@ -88,7 +91,17 @@ public class TSMenu : MonoBehaviour {
         menuLightMat.DOColor(Color.white * 0.0f, "_EmissionColor", 0.25f);
         viewLightMat.DOColor(Color.white * 0.0f, "_EmissionColor", 0.25f);
 
-        selectables[currentSelectableIndex].view.DOFade(0.0f, 0.25f).OnComplete(delegate {
+        selectables[currentSelectableIndex].view.DOFade(0.0f, 0.25f);
+        menuCanvasGroup.DOFade(0.0f, 0.25f);
+    }
+
+    private IEnumerator _LoadWorld() {
+
+        AsyncOperation op = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+        while (!op.isDone) 
+            yield return null;
+
+        door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f).OnComplete(delegate {
 
             Destroy(gameObject);
         });
