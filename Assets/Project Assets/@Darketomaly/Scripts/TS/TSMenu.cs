@@ -24,6 +24,7 @@ public class TSMenu : MonoBehaviour {
     public CanvasGroup menuCanvasGroup;
 
     public Transform door;
+    public Controller controller;
 
     private int currentSelectableIndex;
     private bool enteredSelection;
@@ -100,6 +101,8 @@ public class TSMenu : MonoBehaviour {
         AsyncOperation op = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
         while (!op.isDone) 
             yield return null;
+
+        controller.enabled = true;
 
         door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f).OnComplete(delegate {
 
