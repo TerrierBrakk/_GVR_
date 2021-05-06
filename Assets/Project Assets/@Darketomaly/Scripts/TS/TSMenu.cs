@@ -29,58 +29,109 @@ public class TSMenu : MonoBehaviour {
     private int currentSelectableIndex;
     private bool enteredSelection;
 
+    [Header("In-game Menu")]
+    public CanvasGroup fadeCanvas;
+    private bool gameInitialized = false;
+    private Vector3 agentDefaultPos;
+
     private bool _7thAxisInUse = false;
-    private bool _0thAxisInUse = false;
-    private bool _1thAxisInUse = false;
+    private bool _0InUse = false;
+    private bool _1InUse = false;
+    private bool _7InUse = false;
 
     public void Start() {
 
         SelectFromMenu(0);
+        agentDefaultPos = controller.gameObject.transform.position;
     }
 
     public void Update() {
 
-        if (!enteredSelection) {
+        if(!gameInitialized) {
 
-            if (Input.GetAxisRaw("7th Axis") != 0) { //up/down
+            if (!enteredSelection) {
 
-                if (!_7thAxisInUse) {
+                if (Input.GetAxisRaw("7th Axis") != 0) { //up/down
 
-                    if (Input.GetAxisRaw("7th Axis") > 0) //up
-                        SelectFromMenu(currentSelectableIndex - 1);
-                    else //down
-                        SelectFromMenu(currentSelectableIndex + 1);
+                    if (!_7thAxisInUse) {
 
-                    _7thAxisInUse = true;
-                }
+                        if (Input.GetAxisRaw("7th Axis") > 0) //up
+                            SelectFromMenu(currentSelectableIndex - 1);
+                        else //down
+                            SelectFromMenu(currentSelectableIndex + 1);
 
-            } else {
-
-                if (_7thAxisInUse) _7thAxisInUse = false;
-
-                if (Input.GetAxisRaw("0") != 0) { //enter
-
-                    if (!_0thAxisInUse) {
-
-                        EnterSelection(true);
-                        _0thAxisInUse = true;
+                        _7thAxisInUse = true;
                     }
 
-                } else 
-                    if (_0thAxisInUse) _0thAxisInUse = false;
-            }
+                } else {
 
-        } else if (Input.GetAxisRaw("1") != 0) { //return
+                    if (_7thAxisInUse) _7thAxisInUse = false;
 
-            if (!_1thAxisInUse) {
+                    if (Input.GetAxisRaw("0") != 0) { //enter
 
-                EnterSelection(false);
-                _1thAxisInUse = true;
-            }
+                        if (!_0InUse) {
 
-        } else 
-            if (_1thAxisInUse) _1thAxisInUse = false;
-        
+                            EnterSelection(true);
+                            _0InUse = true;
+                        }
+
+                    } else
+                        if (_0InUse) _0InUse = false;
+                }
+
+            } else if (Input.GetAxisRaw("1") != 0) { //return
+
+                if (!_1InUse) {
+
+                    EnterSelection(false);
+                    _1InUse = true;
+                }
+
+            } else
+                if (_1InUse) _1InUse = false;
+
+        } else {
+
+            if (Input.GetAxisRaw("7") != 0) {
+
+                if (!_7InUse) {
+
+                    StartCoroutine(RestartGame());
+                    _7InUse = true;
+                }
+            } else if (_7InUse) _7InUse = false;
+            
+        }
+    }
+
+    public IEnumerator RestartGame() {
+
+        fadeCanvas.gameObject.SetActive(true);
+
+        //control in-game menu
+        fadeCanvas.DOFade(1.0f, 0.25f);
+        yield return new WaitForSeconds(0.25f);
+
+        controller.agent.Warp(agentDefaultPos);
+
+        while (controller.gameObject.transform.position != agentDefaultPos)
+            yield return null; //agent things...
+
+        controller.enabled = false;
+        door.rotation = new Quaternion();
+        AsyncOperation op = SceneManager.UnloadSceneAsync(1);
+        while(!op.isDone)
+            yield return null;
+
+        menuCanvasGroup.alpha = 1.0f;
+        menuLight.intensity = 1.0f;
+
+        fadeCanvas.DOFade(0.0f, 0.25f).OnComplete(delegate {
+
+            gameInitialized = false;
+            enteredSelection = false;
+            fadeCanvas.gameObject.SetActive(false);
+        });
     }
 
     public void SelectFromMenu(int desiredSelectableIndex) {
@@ -138,10 +189,11 @@ public class TSMenu : MonoBehaviour {
             yield return null;
 
         controller.enabled = true;
+        gameInitialized = true;
 
         door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f).OnComplete(delegate {
 
-            Destroy(gameObject);
+            //Destroy(gameObject);
         });
     }
 
