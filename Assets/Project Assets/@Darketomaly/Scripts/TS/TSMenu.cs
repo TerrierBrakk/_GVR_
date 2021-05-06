@@ -29,6 +29,10 @@ public class TSMenu : MonoBehaviour {
     private int currentSelectableIndex;
     private bool enteredSelection;
 
+    private bool _7thAxisInUse = false;
+    private bool _0thAxisInUse = false;
+    private bool _1thAxisInUse = false;
+
     public void Start() {
 
         SelectFromMenu(0);
@@ -38,14 +42,45 @@ public class TSMenu : MonoBehaviour {
 
         if (!enteredSelection) {
 
-            if (Input.GetKeyDown(KeyCode.S))
-                SelectFromMenu(currentSelectableIndex + 1);
-            else if (Input.GetKeyDown(KeyCode.W))
-                SelectFromMenu(currentSelectableIndex - 1);
-            else if (Input.GetKeyDown(KeyCode.Return))
-                EnterSelection(true);
-        } else if (Input.GetKeyDown(KeyCode.Escape))
-            EnterSelection(false);
+            if (Input.GetAxisRaw("7th Axis") != 0) { //up/down
+
+                if (!_7thAxisInUse) {
+
+                    if (Input.GetAxisRaw("7th Axis") > 0) //up
+                        SelectFromMenu(currentSelectableIndex - 1);
+                    else //down
+                        SelectFromMenu(currentSelectableIndex + 1);
+
+                    _7thAxisInUse = true;
+                }
+
+            } else {
+
+                if (_7thAxisInUse) _7thAxisInUse = false;
+
+                if (Input.GetAxisRaw("0") != 0) { //enter
+
+                    if (!_0thAxisInUse) {
+
+                        EnterSelection(true);
+                        _0thAxisInUse = true;
+                    }
+
+                } else 
+                    if (_0thAxisInUse) _0thAxisInUse = false;
+            }
+
+        } else if (Input.GetAxisRaw("1") != 0) { //return
+
+            if (!_1thAxisInUse) {
+
+                EnterSelection(false);
+                _1thAxisInUse = true;
+            }
+
+        } else 
+            if (_1thAxisInUse) _1thAxisInUse = false;
+        
     }
 
     public void SelectFromMenu(int desiredSelectableIndex) {
