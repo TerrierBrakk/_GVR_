@@ -34,10 +34,10 @@ public class TSMenu : MonoBehaviour {
     private bool gameInitialized = false;
     private Vector3 agentDefaultPos;
 
-    private bool _7thAxisInUse = false;
+    private bool _6thAxisInUse = false; //PC 7 Axis, Android 6
     private bool _0InUse = false;
     private bool _1InUse = false;
-    private bool _7InUse = false;
+    private bool _10InUse = false; //PC 7, Android 10
 
     public void Start() {
 
@@ -51,21 +51,21 @@ public class TSMenu : MonoBehaviour {
 
             if (!enteredSelection) {
 
-                if (Input.GetAxisRaw("7th Axis") != 0) { //up/down
+                if (Input.GetAxisRaw("6th Axis") != 0) { //up/down
 
-                    if (!_7thAxisInUse) {
+                    if (!_6thAxisInUse) {
 
-                        if (Input.GetAxisRaw("7th Axis") > 0) //up
+                        if (Input.GetAxisRaw("6th Axis") < 0) //up
                             SelectFromMenu(currentSelectableIndex - 1);
                         else //down
                             SelectFromMenu(currentSelectableIndex + 1);
 
-                        _7thAxisInUse = true;
+                        _6thAxisInUse = true;
                     }
 
                 } else {
 
-                    if (_7thAxisInUse) _7thAxisInUse = false;
+                    if (_6thAxisInUse) _6thAxisInUse = false;
 
                     if (Input.GetAxisRaw("0") != 0) { //enter
 
@@ -92,14 +92,14 @@ public class TSMenu : MonoBehaviour {
 
         } else {
 
-            if (Input.GetAxisRaw("7") != 0) {
+            if (Input.GetAxisRaw("10") != 0) {
 
-                if (!_7InUse) {
+                if (!_10InUse) {
 
                     StartCoroutine(RestartGame());
-                    _7InUse = true;
+                    _10InUse = true;
                 }
-            } else if (_7InUse) _7InUse = false;
+            } else if (_10InUse) _10InUse = false;
             
         }
     }
@@ -125,6 +125,7 @@ public class TSMenu : MonoBehaviour {
 
         menuCanvasGroup.alpha = 1.0f;
         menuLight.intensity = 1.0f;
+        menuLightMat.DOColor(Color.white * 1.0f, "_EmissionColor", 0.0f);
 
         fadeCanvas.DOFade(0.0f, 0.25f).OnComplete(delegate {
 
