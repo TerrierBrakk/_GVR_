@@ -14,7 +14,6 @@ public class Controller : MonoBehaviour {
 
         if (Input.GetAxisRaw("Horizontal") != 0 ||
             Input.GetAxisRaw("Vertical") != 0) 
-
             agent.Move(child.rotation * new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f,Input.GetAxisRaw("Vertical")) * 3.50f * Time.deltaTime);
         
         /*

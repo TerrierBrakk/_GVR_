@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 [System.Serializable]
 public class Selectable {
@@ -47,7 +48,9 @@ public class TSMenu : MonoBehaviour {
 
     public void Update() {
 
-        if(!gameInitialized) {
+#if UNITY_ANDROID
+
+        if (!gameInitialized) {
 
             if (!enteredSelection) {
 
@@ -100,11 +103,31 @@ public class TSMenu : MonoBehaviour {
                     _10InUse = true;
                 }
             } else if (_10InUse) _10InUse = false;
-            
         }
+
+#endif
+
+#if UNITY_EDITOR
+
+        if (!gameInitialized) {
+
+            if (!enteredSelection) {
+
+                if (Input.GetKeyDown(KeyCode.W))
+                    SelectFromMenu(currentSelectableIndex - 1);
+                else if (Input.GetKeyDown(KeyCode.S))
+                    SelectFromMenu(currentSelectableIndex + 1);
+                else if (Input.GetKeyDown(KeyCode.Return))
+                    EnterSelection(true);
+            } else if (Input.GetKeyDown(KeyCode.Escape))
+                EnterSelection(false);
+
+        } else if (Input.GetKeyDown(KeyCode.Escape))
+            StartCoroutine(RestartGame());
+#endif
     }
 
-    public IEnumerator RestartGame() {
+        public IEnumerator RestartGame() {
 
         fadeCanvas.gameObject.SetActive(true);
 
@@ -192,11 +215,25 @@ public class TSMenu : MonoBehaviour {
         controller.enabled = true;
         gameInitialized = true;
 
-        door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f).OnComplete(delegate {
-
-            //Destroy(gameObject);
-        });
+        door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f);
     }
 
-    public void QuitApplication() { }
+    public void OnDestroy() {
+
+        //Reset lights
+        if(menuLightMat && viewLightMat && menuLight && viewLight) {
+
+            menuLightMat.SetColor("_EmissionColor", Color.white * (menuLight.intensity = 1.0f));
+            viewLightMat.SetColor("_EmissionColor", Color.white * (viewLight.intensity = 0.0f));
+        }
+    }
+
+    public void QuitApplication() {
+
+        Application.Quit();
+
+        #if UNITY_EDITOR
+            EditorApplication.ExitPlaymode();
+        #endif
+    }
 }
