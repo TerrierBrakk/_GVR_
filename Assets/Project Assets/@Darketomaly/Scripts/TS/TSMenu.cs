@@ -27,6 +27,13 @@ public class TSMenu : MonoBehaviour {
     public Transform door;
     public Controller controller;
 
+    [Header("Audio")]
+    public AudioClip selectionClip;
+    public AudioSource selectionAudioSource;
+    public AudioClip doorOpenClip;
+    public AudioClip doorCloseClip;
+    public AudioSource doorAudioSource;
+
     private int currentSelectableIndex;
     private bool enteredSelection;
 
@@ -150,6 +157,8 @@ public class TSMenu : MonoBehaviour {
         menuLight.intensity = 1.0f;
         menuLightMat.DOColor(Color.white * 1.0f, "_EmissionColor", 0.0f);
 
+        doorAudioSource.PlayOneShot(doorCloseClip);
+
         fadeCanvas.DOFade(0.0f, 0.25f).OnComplete(delegate {
 
             gameInitialized = false;
@@ -159,6 +168,8 @@ public class TSMenu : MonoBehaviour {
     }
 
     public void SelectFromMenu(int desiredSelectableIndex) {
+
+        selectionAudioSource.PlayOneShot(selectionClip);
 
         if (desiredSelectableIndex > selectables.Count - 1) currentSelectableIndex = 0;
         else if (desiredSelectableIndex < 0) currentSelectableIndex = selectables.Count - 1;
@@ -215,7 +226,8 @@ public class TSMenu : MonoBehaviour {
         controller.enabled = true;
         gameInitialized = true;
 
-        door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 0.45f);
+        door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 2.4f);
+        AudioManager.instance.PlaySound(doorOpenClip);
     }
 
     public void OnDestroy() {
