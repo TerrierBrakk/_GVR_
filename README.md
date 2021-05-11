@@ -1,5 +1,5 @@
 # Slender man inspired VR Game
-Development files
+Development files for https://darketomaly.itch.io/lorem-ipsum
 
 # Development Tools
 - Unity 2019.4.18f1 LTS
