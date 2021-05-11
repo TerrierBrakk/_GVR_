@@ -1205,7 +1205,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 6.5
+  MaxDistance: 8
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -8301,7 +8301,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 4.3
+  MaxDistance: 5
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -8459,7 +8459,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2132596210}
-  - component: {fileID: 2132596211}
   - component: {fileID: 2132596212}
   m_Layer: 0
   m_Name: '[Audio Source] Selection'
@@ -8476,25 +8475,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2132596209}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9, y: 1.52, z: 1.63}
+  m_LocalPosition: {x: -1.62, y: 1.52, z: 1.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2132596211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2132596209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2be37fada5604fd4184d248a864d4b1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioSource: {fileID: 2132596212}
 --- !u!82 &2132596212
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8516,7 +8502,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 6.52
+  MaxDistance: 8
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
