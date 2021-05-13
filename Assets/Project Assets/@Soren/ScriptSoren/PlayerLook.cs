@@ -1,23 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerLook : MonoBehaviour
 {
     public Transform slender;
-
     public bool isLooking;
     public static float timeNotLooking;
-    // Start is called before the first frame update
-    void Start()
-    {
 
 
+    void Start() {
+
+        SceneManager.sceneLoaded += OnSceneChange;
     }
 
-    // Update is called once per frame
+    public void OnSceneChange(Scene scene, LoadSceneMode mode) {
+
+        slender = FindObjectOfType<EnemyBehaviour>().transform;
+    }
+
     void Update()
     {
+        if (!slender) return;
+
         float distance = Vector3.Distance(slender.position, transform.position);
         float angle = Vector3.Angle(transform.forward, slender.position - transform.position);
 
