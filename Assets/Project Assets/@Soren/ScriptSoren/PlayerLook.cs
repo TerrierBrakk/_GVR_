@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerLook : MonoBehaviour
 {
-    public Transform slender;
+    public Transform slender = null;
     public bool isLooking;
     public static float timeNotLooking;
 
@@ -17,7 +17,9 @@ public class PlayerLook : MonoBehaviour
 
     public void OnSceneChange(Scene scene, LoadSceneMode mode) {
 
-        slender = FindObjectOfType<EnemyBehaviour>().transform;
+        EnemyBehaviour tmp = FindObjectOfType<EnemyBehaviour>();
+        if(tmp)
+            slender = tmp.transform;
     }
 
     void Update()
