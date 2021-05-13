@@ -7,11 +7,12 @@ public class Controller : MonoBehaviour {
 
     public NavMeshAgent agent;
     public Transform child;
+    public TSMenu tsMenu;
 
     void Update() {
 
-        //probably lame code optimization but ¯\_(ツ)_/¯
-
+        //check tsmenu boolean ingamemenuenabled
+        if(!tsMenu.inGameMenuEnabled)
         if (Input.GetAxisRaw("Horizontal") != 0 ||
             Input.GetAxisRaw("Vertical") != 0) 
             agent.Move(child.rotation * new Vector3(Input.GetAxisRaw("Horizontal"), 0.0f,Input.GetAxisRaw("Vertical")) * 3.50f * Time.deltaTime);

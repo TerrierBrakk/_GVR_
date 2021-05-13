@@ -13,6 +13,7 @@ public class Selectable {
     public CanvasGroup view;
 }
 
+//Most of it is awfully hard-coded for the sake of speed completion
 public class TSMenu : MonoBehaviour {
 
     public Image underline;
@@ -39,8 +40,14 @@ public class TSMenu : MonoBehaviour {
 
     [Header("In-game Menu")]
     public CanvasGroup fadeCanvas;
+    public CanvasGroup menuPanel;
+    public RectTransform arrow;
+    public List<Button> inGameMenuButtons = new List<Button>();
     private bool gameInitialized = false;
     private Vector3 agentDefaultPos;
+    public bool inGameMenuEnabled = false;
+    private int currentInGameMenuButtonSelectionIndex;
+    private bool restarting = false;
 
     private bool _6thAxisInUse = false; //PC 7 Axis, Android 6
     private bool _0InUse = false;
@@ -104,43 +111,132 @@ public class TSMenu : MonoBehaviour {
 
         } else {
 
-            if (Input.GetAxisRaw("10") != 0) {
+            if (Input.GetAxisRaw("10") != 0) { //same as ESC
 
-                if (!_10InUse) {
+                if (!_10InUse) { 
 
-                    StartCoroutine(RestartGame());
+                    if (gameInitialized && menuLight.intensity == 0.0f && !restarting)
+                        DisplayMenu();
                     _10InUse = true;
                 }
             } else if (_10InUse) _10InUse = false;
+
+            if(inGameMenuEnabled) {
+
+                if (Input.GetAxisRaw("6th Axis") != 0) { //up/down
+
+                    if (!_6thAxisInUse) {
+
+                        if (Input.GetAxisRaw("6th Axis") < 0) //up
+                            SelectFromInGameMenu(currentInGameMenuButtonSelectionIndex - 1);
+                        else //down
+                            SelectFromInGameMenu(currentInGameMenuButtonSelectionIndex + 1);
+
+                        _6thAxisInUse = true;
+                    }
+
+                } else {
+
+                    if (_6thAxisInUse) _6thAxisInUse = false;
+
+                    if (Input.GetAxisRaw("0") != 0) { //enter
+
+                        if (!_0InUse) {
+
+                            inGameMenuButtons[currentInGameMenuButtonSelectionIndex].onClick.Invoke();
+                            _0InUse = true;
+                        }
+
+                    } else if (_0InUse) _0InUse = false;
+                }
+            }
         }
 
 #endif
 
 #if UNITY_EDITOR
-
         if (!gameInitialized) {
 
             if (!enteredSelection) {
 
-                if (Input.GetKeyDown(KeyCode.W))
-                    SelectFromMenu(currentSelectableIndex - 1);
-                else if (Input.GetKeyDown(KeyCode.S))
-                    SelectFromMenu(currentSelectableIndex + 1);
-                else if (Input.GetKeyDown(KeyCode.Return))
-                    EnterSelection(true);
+                if (!inGameMenuEnabled) {
+
+                    if (Input.GetKeyDown(KeyCode.W))
+                        SelectFromMenu(currentSelectableIndex - 1);
+                    else if (Input.GetKeyDown(KeyCode.S))
+                        SelectFromMenu(currentSelectableIndex + 1);
+                    else if (Input.GetKeyDown(KeyCode.Return))
+                        EnterSelection(true);
+
+                } else {
+
+                    Debug.Log("called");
+
+
+                }
+
+
             } else if (Input.GetKeyDown(KeyCode.Escape))
                 EnterSelection(false);
 
-        } else if (Input.GetKeyDown(KeyCode.Escape))
-            StartCoroutine(RestartGame());
+        } else {
+
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+
+                if(gameInitialized && menuLight.intensity == 0.0f && !restarting)
+                    DisplayMenu();
+            }
+
+            if(inGameMenuEnabled) {
+
+                //control in-game menu
+                if (Input.GetKeyDown(KeyCode.W))
+                    SelectFromInGameMenu(currentInGameMenuButtonSelectionIndex - 1);
+                else if (Input.GetKeyDown(KeyCode.S))
+                    SelectFromInGameMenu(currentInGameMenuButtonSelectionIndex + 1);
+                else if (Input.GetKeyDown(KeyCode.Return))
+                    inGameMenuButtons[currentInGameMenuButtonSelectionIndex].onClick.Invoke();
+            }
+        }
 #endif
     }
 
-        public IEnumerator RestartGame() {
+    public void DisplayMenu() {//ingame menu
+
+        if (!inGameMenuEnabled) {
+
+            menuPanel.DOFade(1.0f, 0.25f);
+            inGameMenuEnabled = true;
+            SelectFromInGameMenu(0);
+            fadeCanvas.DOFade(0.5f, 0.25f);
+            
+        } else {
+
+            menuPanel.DOFade(0.0f, 0.25f);
+            inGameMenuEnabled = false;
+            fadeCanvas.DOFade(0.0f, 0.25f);
+        }
+    }
+
+    public void SelectFromInGameMenu(int index) {
+
+        currentInGameMenuButtonSelectionIndex = index;
+        if (index > inGameMenuButtons.Count - 1) currentInGameMenuButtonSelectionIndex = 0;
+        else if (index < 0) currentInGameMenuButtonSelectionIndex = inGameMenuButtons.Count - 1;
+
+        arrow.DOLocalMove(inGameMenuButtons[currentInGameMenuButtonSelectionIndex].GetComponent<RectTransform>().localPosition, 0.25f);
+    }
+
+    public void _RestartGame() {
+        StartCoroutine(RestartGame());
+        menuPanel.DOFade(0.0f, 0.25f);
+        inGameMenuEnabled = false;
+        restarting = true;
+    }
+    public IEnumerator RestartGame() {
 
         fadeCanvas.gameObject.SetActive(true);
 
-        //control in-game menu
         fadeCanvas.DOFade(1.0f, 0.25f);
         yield return new WaitForSeconds(0.25f);
 
@@ -167,6 +263,7 @@ public class TSMenu : MonoBehaviour {
             gameInitialized = false;
             enteredSelection = false;
             fadeCanvas.gameObject.SetActive(false);
+            restarting = false;
         });
     }
 
@@ -231,16 +328,6 @@ public class TSMenu : MonoBehaviour {
 
         doorOpenTween = door.DORotate(new Vector3(0.0f, -77.3f, 0.0f), 2.4f);
         doorAudioSource.PlayOneShot(doorOpenClip);
-    }
-
-    public void OnDestroy() {
-
-        //Reset lights
-        if(menuLightMat && viewLightMat && menuLight && viewLight) {
-
-            menuLightMat.SetColor("_EmissionColor", Color.white * (menuLight.intensity = 1.0f));
-            viewLightMat.SetColor("_EmissionColor", Color.white * (viewLight.intensity = 0.0f));
-        }
     }
 
     public void QuitApplication() {
