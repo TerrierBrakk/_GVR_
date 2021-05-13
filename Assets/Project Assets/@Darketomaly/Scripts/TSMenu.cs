@@ -43,11 +43,11 @@ public class TSMenu : MonoBehaviour {
     public CanvasGroup menuPanel;
     public RectTransform arrow;
     public List<Button> inGameMenuButtons = new List<Button>();
-    private bool gameInitialized = false;
+    public bool gameInitialized = false;
     private Vector3 agentDefaultPos;
     public bool inGameMenuEnabled = false;
     private int currentInGameMenuButtonSelectionIndex;
-    private bool restarting = false;
+    public bool restarting = false;
 
     private bool _6thAxisInUse = false; //PC 7 Axis, Android 6
     private bool _0InUse = false;
