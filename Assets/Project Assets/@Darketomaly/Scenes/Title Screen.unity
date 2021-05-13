@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23650
+  m_Name: pb_Mesh22082
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -521,7 +521,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -4.8, y: -25.8}
+  m_AnchoredPosition: {x: -10.1, y: -43.6}
   m_SizeDelta: {x: 108.7, y: 84}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &63499845
@@ -543,11 +543,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Lvl design by Denise
+  m_text: 'Forest->Denise F.
 
-    ----------------
+    -----------------
 
-    Enemy by Jorge'
+    Enemy->Jorge V.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c6bdf41a16eeb2f47a6ee6453b95b91b, type: 2}
   m_sharedMaterial: {fileID: 3207124633430694325, guid: c6bdf41a16eeb2f47a6ee6453b95b91b,
@@ -611,7 +611,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -2.455318, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1825,7 +1825,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh23842
+  m_Name: pb_Mesh22282
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5785,12 +5785,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'TS, HUD and movement by Moises Gonzalez
+  m_text: 'TS, Menu, GameOver, FlashLight->Moises G.
 
     ----------------
 
     Enemy
-    and pickups by Felipe Ortega'
+    Movement-> Felipe'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c6bdf41a16eeb2f47a6ee6453b95b91b, type: 2}
   m_sharedMaterial: {fileID: 3207124633430694325, guid: c6bdf41a16eeb2f47a6ee6453b95b91b,
@@ -5854,7 +5854,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 1
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -6.9529614, y: 0, z: -7.8131666, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -7124,7 +7124,9 @@ MonoBehaviour:
   - {fileID: 1628123164}
   - {fileID: 296705713}
   - {fileID: 1365500651}
+  gameInitialized: 0
   inGameMenuEnabled: 0
+  restarting: 0
 --- !u!4 &1417579379
 Transform:
   m_ObjectHideFlags: 0
